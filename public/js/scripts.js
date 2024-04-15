@@ -5,3 +5,10 @@
 */
 // This file is intentionally blank
 // Use this file to add JavaScript to your project
+
+function setLocation(){
+  navigator.geolocation.getCurrentPosition((position) => {
+    console.log(position.coords.latitude);
+    console.log(position.coords.longitude);
+  });
+}

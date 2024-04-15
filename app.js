@@ -15,6 +15,8 @@ const unloginedRouter = require('./routes/unlogined');
 const app = express();
 app.set('port',process.env.PORT || 5000);
 
+app.set("view engine", "ejs");
+
 //추가 로그 보기
 app.use(morgan('dev'));
 
