@@ -15,7 +15,7 @@ function getCurrentPosition() {
                 resolve(position);
             },
             error => {
-                reject(error);
+                reject('위치 정보를 가져오는 동안 오류 발생:',error);
             }
         );
     });
@@ -24,12 +24,45 @@ function getCurrentPosition() {
 function setLocation(){
   // 프로미스를 사용하여 위치 정보 가져오기
   // 그냥 프로미스 써보고 싶었음
-  getCurrentPosition()
-      .then(position => {
-        console.log(position.coords.latitude);
-        console.log(position.coords.longitude);
-      })
-      .catch(error => {
-          console.error('위치 정보를 가져오는 동안 오류 발생:', error);
-      });
+    getCurrentPosition()
+        .then(position => {
+            latitude = position.coords.latitude;
+            longitude = position.coords.longitude;
+            return new Promise((resolve,reject) =>{
+                // XMLHttpRequest 객체 생성
+                var xhr = new XMLHttpRequest();
+                // 요청을 보낼 URL 설정
+                var url = "/unlogined"; // 실제 요청을 보낼 서버의 URL로 변경해야 합니다
+                xhr.open("POST", url, true);
+                // 변수 값 합치기
+                var data = JSON.stringify({ latitude: latitude, longitude: longitude });
+                // 요청 헤더 설정 (JSON 형식의 데이터 전송)
+                xhr.setRequestHeader("Content-Type", "application/json");
+                // 요청이 완료되었을 때의 콜백 함수 설정
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === XMLHttpRequest.DONE) {
+                        if (xhr.status === 200) {
+                            // 요청이 성공적으로 완료되었을 때
+                            resolve(xhr.responseText);
+                        } else {
+                            // 요청이 실패했을 때 처리할 코드
+                            reject('요청 실패:', xhr.status);
+                        }
+                    }
+                };
+                // 요청 보내기
+                xhr.send(data);                
+            });
+        })
+        .then(
+            locationInfo => {
+                console.log(locationInfo);
+            }
+        )
+        .catch(error => {
+            console.error(error);
+        });
+    
+
+
 }
