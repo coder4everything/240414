@@ -56,7 +56,50 @@ function setLocation(){
         })
         .then(
             locationInfo => {
+                locationInfo = JSON.parse(locationInfo);
                 console.log(locationInfo);
+
+                // 테이블 컨테이너 요소 가져오기
+                const tableContainer = document.getElementById('table-container');
+                tableContainer.innerHTML = '';
+
+                // 테이블 요소 생성
+                const table = document.createElement('table');
+                table.classList.add('table');
+                table.classList.add('table-hover');
+
+                // 테이블 본문 생성
+                const tableBody = document.createElement('tbody');
+
+                // JSON 데이터를 테이블 행으로 추가하기
+                locationInfo.forEach(item => {
+                    const row = document.createElement('tr');
+                    // 필드 값을 각 셀에 추가하기
+                    const fieldsToAdd = ['sido', 'sigungu', 'etc']; // 추가할 필드 이름 배열
+                    // 필드 값 추가
+                    const headTd = document.createElement('td');
+                    //hidden으로 idx값 넣기
+
+                    row.appendChild(headTd);
+                    const cell = document.createElement('td');
+                    text = "";
+                    fieldsToAdd.forEach(fieldName => {
+                        text += item[fieldName] + " ";
+                    });
+                    cell.textContent =text;
+                    row.appendChild(cell);
+                    const tailTd = document.createElement('td');
+                    row.appendChild(tailTd);
+                    // 테이블에 행 추가하기
+                    tableBody.appendChild(row);
+            });
+
+            // 테이블 본문을 테이블에 추가
+            table.appendChild(tableBody);
+
+            // 테이블을 컨테이너에 추가
+            tableContainer.appendChild(table);
+
             }
         )
         .catch(error => {
