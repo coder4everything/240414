@@ -14,6 +14,7 @@ router.route('/')
     latitudeValue = req.body.latitude;
     longitudeValue = req.body.longitude;
 
+    //가까운 것부터 나오도록 정렬 조건 추가해야 함
     const address = await Address.findAll({
       where:{
         latitude: {

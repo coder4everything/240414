@@ -13,6 +13,7 @@ dotenv.config();
 const indexRouter = require('./routes');
 const userRouter = require('./routes/user');
 const unloginedRouter = require('./routes/unlogined');
+const loginRouter = require('./routes/login');
 
 const app = express();
 app.set('port',process.env.PORT || 5000);
@@ -59,6 +60,7 @@ app.use(session({
 
 app.use('/',indexRouter);
 app.use('/unlogined',unloginedRouter);
+app.use('/login',loginRouter);
 app.use('/user',userRouter);
 
 app.use((req,res,next)=>{

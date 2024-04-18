@@ -22,8 +22,6 @@ function getCurrentPosition() {
 }
 
 function setLocation(){
-  // 프로미스를 사용하여 위치 정보 가져오기
-  // 그냥 프로미스 써보고 싶었음
     getCurrentPosition()
         .then(position => {
             latitude = position.coords.latitude;
@@ -46,7 +44,7 @@ function setLocation(){
                             resolve(xhr.responseText);
                         } else {
                             // 요청이 실패했을 때 처리할 코드
-                            reject('요청 실패:', xhr.status);
+                            reject('위치 정보 요청 실패:', xhr.status);
                         }
                     }
                 };
@@ -57,8 +55,7 @@ function setLocation(){
         .then(
             locationInfo => {
                 locationInfo = JSON.parse(locationInfo);
-                console.log(locationInfo);
-
+        
                 // 테이블 컨테이너 요소 가져오기
                 const tableContainer = document.getElementById('table-container');
                 tableContainer.innerHTML = '';
@@ -67,6 +64,7 @@ function setLocation(){
                 const table = document.createElement('table');
                 table.classList.add('table');
                 table.classList.add('table-hover');
+                table.classList.add('location-info');
 
                 // 테이블 본문 생성
                 const tableBody = document.createElement('tbody');
@@ -75,12 +73,9 @@ function setLocation(){
                 locationInfo.forEach(item => {
                     const row = document.createElement('tr');
                     // 필드 값을 각 셀에 추가하기
+                    row.setAttribute('data-row-idx',item['idx']);
                     const fieldsToAdd = ['sido', 'sigungu', 'etc']; // 추가할 필드 이름 배열
                     // 필드 값 추가
-                    const headTd = document.createElement('td');
-                    //hidden으로 idx값 넣기
-
-                    row.appendChild(headTd);
                     const cell = document.createElement('td');
                     text = "";
                     fieldsToAdd.forEach(fieldName => {
@@ -88,19 +83,44 @@ function setLocation(){
                     });
                     cell.textContent =text;
                     row.appendChild(cell);
-                    const tailTd = document.createElement('td');
-                    row.appendChild(tailTd);
                     // 테이블에 행 추가하기
                     tableBody.appendChild(row);
             });
-
             // 테이블 본문을 테이블에 추가
             table.appendChild(tableBody);
-
             // 테이블을 컨테이너에 추가
             tableContainer.appendChild(table);
+                        
+                        
+            // 테이블의 각 행을 나타내는 모든 <tr> 요소를 가져옵니다.
+            var rows = table.querySelectorAll('tr');
 
-            }
+            // 각 행에 클릭 이벤트를 추가합니다.
+            rows.forEach(function(row) {
+                row.addEventListener('click', function() {
+                    // 클릭된 행의 데이터 속성 값을 읽어옵니다.
+                    var rowIdx = row.getAttribute('data-row-idx');
+
+                    var form = document.createElement('form');
+                    form.setAttribute('method', 'post');
+                    form.setAttribute('action', '/login'); // 폼이 전송될 엔드포인트
+
+                    var input = document.createElement('input');
+                    input.setAttribute('type', 'hidden');
+                    input.setAttribute('name', 'addressIdx');
+                    input.setAttribute('value', rowIdx);
+
+                    form.appendChild(input);
+
+                    // 폼을 body에 추가
+                    document.body.appendChild(form);
+
+                    // 폼 제출
+                    form.submit();
+
+                });
+            })        
+        }
         )
         .catch(error => {
             console.error(error);
@@ -109,3 +129,4 @@ function setLocation(){
 
 
 }
+
